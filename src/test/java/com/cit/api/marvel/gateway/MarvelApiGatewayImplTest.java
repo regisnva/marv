@@ -10,9 +10,16 @@ import javax.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.cit.api.marvel.gateway.impl.MarvelApiGatewayImpl;
+import com.cti.api.marvel.gateway.model.Character;
+import com.cti.api.marvel.gateway.model.MarvelResponse;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import junit.framework.Assert;
 
 
 public class MarvelApiGatewayImplTest {
@@ -32,6 +39,7 @@ public class MarvelApiGatewayImplTest {
 	}
 	
 	@Test
+	@Ignore
 	public void shouldBeOkRequestTest() {
 		
 		try {
@@ -43,6 +51,24 @@ public class MarvelApiGatewayImplTest {
 			assertEquals("Conflict request", 200, response.getStatus());
 		} catch (Exception e) {
 			fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void shouldBeGetCharacetersTest(){
+		
+		try {
+			
+			response = marvelApiGateway.get(MarvelConstants.LIST_CHARACTERS_RESOURCE, "limit=2");
+			
+			MarvelResponse<Character> characterResponse = 
+					new GsonBuilder().create().fromJson(response.readEntity(String.class), 
+					new TypeToken<MarvelResponse<Character>>(){}.getType());
+
+			Assert.assertNotNull(characterResponse);
+			
+		} catch (Exception e){
+			
 		}
 	}
 

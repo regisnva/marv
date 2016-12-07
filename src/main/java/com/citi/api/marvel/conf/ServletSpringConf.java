@@ -22,7 +22,7 @@ public class ServletSpringConf extends AbstractAnnotationConfigDispatcherServlet
 	@Override
 	protected String[] getServletMappings() {
 		
-		return new String[]{ "/citmarvel" };
+		return new String[]{ "/" };
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.cit.api.marvel.gateway.MarvelApiGateway;
 import com.cit.api.marvel.gateway.MarvelConstants;
@@ -22,11 +23,12 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
+@Component("MarvelApiGatewayImpl")
 public class MarvelApiGatewayImpl implements MarvelApiGateway {
 
 	private Client client;
 	private WebTarget webTarget;
-//	@Autowired
+	// @Autowired
 	private MarvelConf marvelConf;
 
 	// public MarvelApiGatewayImpl() {
@@ -42,6 +44,11 @@ public class MarvelApiGatewayImpl implements MarvelApiGateway {
 
 	private void initClient() {
 		client = ClientBuilder.newBuilder().build();
+	}
+
+	@Override
+	public Response get(String resource, String queryString) {
+		return this.get(resource, queryString, null, MediaType.APPLICATION_JSON_TYPE);
 	}
 
 	@Override
@@ -65,8 +72,7 @@ public class MarvelApiGatewayImpl implements MarvelApiGateway {
 		webTarget = this.client.target(getUri(resource));
 
 		if (params != null) {
-			params.forEach((k, v) -> webTarget
-					 = webTarget.queryParam(k, v));
+			params.forEach((k, v) -> webTarget = webTarget.queryParam(k, v));
 		}
 
 		return webTarget;
@@ -76,7 +82,7 @@ public class MarvelApiGatewayImpl implements MarvelApiGateway {
 		String ts = UUID.randomUUID().toString();
 
 		UriBuilder uri = UriBuilder.fromPath(marvelConf.getDomain() + resource);
-		
+
 		uri.queryParam(MarvelConstants.QUERY_TS, ts)
 				.queryParam(MarvelConstants.QUERY_APP_KEY, marvelConf.getPublicKey()).queryParam(
 						MarvelConstants.QUERY_HASH, hash(ts, marvelConf.getPublicKey(), marvelConf.getPrivateKey()));

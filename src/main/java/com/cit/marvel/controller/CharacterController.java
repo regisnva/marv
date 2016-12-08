@@ -8,6 +8,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,7 @@ public class CharacterController extends BaseController {
     
     private static final Logger logger = LogManager.getLogger(CharacterController.class);
 
+    @Cacheable("marvelcache") 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<MarvelResponse<MarvelCharacter>> getCharacters(HttpServletRequest req) {
     	

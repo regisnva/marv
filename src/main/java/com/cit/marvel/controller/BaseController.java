@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
 
-import com.cit.api.marvel.gateway.MarvelConstants;
-
 
 public abstract class BaseController {
 	

@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -13,30 +14,39 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.cit.api.marvel.gateway.impl.MarvelApiGatewayImpl;
+import com.cit.api.marvel.conf.AppWebConf;
 import com.cit.api.marvel.gateway.model.MarvelCharacter;
 import com.cit.api.marvel.gateway.model.MarvelResponse;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { AppWebConf.class })
+@WebAppConfiguration
 public class MarvelApiGatewayImplTest {
 
-    private MarvelApiGateway marvelApiGateway;
+    @Autowired
+    @Qualifier("MarvelApiGatewayImpl")
+	private MarvelApiGateway marvelApiGateway;
+    
     private Response response;
+    private MarvelResponse<MarvelCharacter> marvelCharacterResponse; 
 
     @Before
     public void setUp() throws Exception {
-        marvelApiGateway = new MarvelApiGatewayImpl();
     }
 
     @After
     public void tearDown() throws Exception {
-        marvelApiGateway = null;
+    	response = null;
+    	marvelCharacterResponse = null;
     }
 
     @Test
@@ -73,23 +83,19 @@ public class MarvelApiGatewayImplTest {
             fail(e.getMessage());
         }
     }
-
+    
     @Test
-    public void shouldBeGetCharacetersByJacksonTest() {
+    public void shouldBeGetCharactersTest(){
+    	
+    	try {
+    		marvelCharacterResponse = marvelApiGateway.request(MarvelConstants.LIST_CHARACTERS_RESOURCE, "limit=2")
+                    .get(new GenericType<MarvelResponse<MarvelCharacter>>(){});
+    		
+    		assertNotNull(marvelCharacterResponse);
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-
-            response = marvelApiGateway.get(MarvelConstants.LIST_CHARACTERS_RESOURCE, "limit=2");
-
-            String json = response.readEntity(String.class);
-            
-            MarvelResponse<MarvelCharacter> marvelResponse = mapper.readValue(json, MarvelResponse.class);
-
-            assertNotNull(marvelResponse);
-        } catch (Exception e) {
+    	} catch (Exception e) {
             fail(e.getMessage());
-        }
+    	}
     }
-
 }
+	

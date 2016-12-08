@@ -1,9 +1,12 @@
 package com.cit.api.marvel.gateway.model;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+@Component
 public class MarvelResponse<T> {
 
 	private String code;

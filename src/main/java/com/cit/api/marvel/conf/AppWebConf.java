@@ -18,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackageClasses = {CharacterController.class, MarvelConf.class, MarvelApiGateway.class})
+@ComponentScan(basePackageClasses = {CharacterController.class, MarvelConf.class, MarvelApiGateway.class })
 public class AppWebConf extends WebMvcConfigurerAdapter {
 
     @Bean
@@ -38,7 +38,6 @@ public class AppWebConf extends WebMvcConfigurerAdapter {
         converters.add(converter());
     }
 
-    @Bean
     public MappingJackson2HttpMessageConverter converter() {
         final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         

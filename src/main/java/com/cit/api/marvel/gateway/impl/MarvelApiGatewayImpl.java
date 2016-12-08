@@ -1,16 +1,19 @@
 package com.cit.api.marvel.gateway.impl;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,111 +24,115 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import org.glassfish.jersey.jackson.JacksonFeature;
 
 @Component("MarvelApiGatewayImpl")
 public class MarvelApiGatewayImpl implements MarvelApiGateway {
 
-    private Client client;
-    private WebTarget webTarget;
+	private Client client;
+	private WebTarget webTarget;
 
-    @Autowired
-    private MarvelConf marvelConf;
+	@Autowired
+	private MarvelConf marvelConf;
 
-    public MarvelApiGatewayImpl() {
-        initClient();
-        if (marvelConf == null){
-            marvelConf = new MarvelConf();
-        }
-    }
+	public MarvelApiGatewayImpl() {		
+		initClient();
+	}
 
-    private void initClient() {
-        client = ClientBuilder
-                .newBuilder()
-                .register(JacksonFeature.class)
-                .build();
-    }
+	private void initClient() {
+		client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
+	}
 
-    @Override
-    public Response get(String resource, String queryString) {
-        return get(resource, queryString, null, MediaType.APPLICATION_JSON);
-    }
+	@Override
+	public Response get(String resource, String queryString) {
+		return get(resource, queryString, null, MediaType.APPLICATION_JSON);
+	}
+	
+	@Override
+	public Response get(String resource, String queryString, Map<String, String> headers) {
+		return get(resource, queryString, headers, MediaType.APPLICATION_JSON);
+	}
 
-    @Override
-    public Response get(String resource, String queryString, HashMap<String, String> headers, String mediaType) {
-        return request(resource, queryString, headers, mediaType).get();
-    }
+	@Override
+	public Response get(String resource, String queryString, Map<String, String> headers, String mediaType) {
+		return request(resource, queryString, headers, mediaType).get();
+	}
 
-    @Override
-    public Invocation.Builder request(String resource, String queryString) {
-        return request(resource, queryString, null, MediaType.APPLICATION_JSON);
-    }
+	@Override
+	public Invocation.Builder request(String resource, String queryString) {
+		return request(resource, queryString, null, MediaType.APPLICATION_JSON);
+	}
 
-    @Override
-    public Invocation.Builder request(String resource, String queryString, HashMap<String, String> headers,
-            String mediaType) {
+	@Override
+	public Builder request(String resource, String queryString, Map<String, String> headers) {
+		return request(resource, queryString, headers, MediaType.APPLICATION_JSON);
+	}
 
-        Invocation.Builder invocationBuilder = getWebTarget(resource, getQueryParams(queryString)).request(mediaType);
+	@Override
+	public Invocation.Builder request(String resource, String queryString, Map<String, String> headers,
+			String mediaType) {
 
-        if (headers != null) {
-            headers.forEach((k, v) -> invocationBuilder.header(k, v));
-        }
+		Invocation.Builder invocationBuilder = getWebTarget(resource, getQueryParams(queryString)).request(mediaType);
 
-        return invocationBuilder;
-    }
+		if (headers != null) {
+			headers.forEach((k, v) -> invocationBuilder.header(k, v));
+		}
 
-    private WebTarget getWebTarget(String resource, HashMap<String, Object> params) {
-        webTarget = this.client.target(getUri(resource));
+		return invocationBuilder;
+	}
 
-        if (params != null) {
-            params.forEach((k, v) -> webTarget = webTarget.queryParam(k, v));
-        }
+	private WebTarget getWebTarget(String resource, HashMap<String, Object> params) {
+		webTarget = this.client.target(getUri(resource));
 
-        return webTarget;
-    }
+		if (params != null) {
+			params.forEach((k, v) -> webTarget = webTarget.queryParam(k, v));
+		}
 
-    private UriBuilder getUri(String resource) {
-        String ts = UUID.randomUUID().toString();
+		return webTarget;
+	}
 
-        UriBuilder uri = UriBuilder.fromPath(marvelConf.getDomain() + resource);
+	private UriBuilder getUri(String resource) {
+		String ts = UUID.randomUUID().toString();
 
-        uri.queryParam(MarvelConstants.QUERY_TS, ts)
-                .queryParam(MarvelConstants.QUERY_APP_KEY, marvelConf.getPublicKey()).queryParam(
-                MarvelConstants.QUERY_HASH, hash(ts, marvelConf.getPublicKey(), marvelConf.getPrivateKey()));
+		UriBuilder uri = UriBuilder.fromPath(marvelConf.getDomain() + resource);
 
-        return uri;
-    }
+		uri.queryParam(MarvelConstants.QUERY_TS, ts)
+				.queryParam(MarvelConstants.QUERY_APP_KEY, marvelConf.getPublicKey()).queryParam(
+						MarvelConstants.QUERY_HASH, hash(ts, marvelConf.getPublicKey(), marvelConf.getPrivateKey()));
 
-    private String hash(String ts, String publicKey, String privateKey) {
-        HashFunction hash = Hashing.md5();
-        HashCode code = hash.newHasher().putString(ts, Charsets.UTF_8).putString(privateKey, Charsets.UTF_8)
-                .putString(publicKey, Charsets.UTF_8).hash();
+		return uri;
+	}
 
-        return code.toString();
-    }
+	private String hash(String ts, String publicKey, String privateKey) {
+		HashFunction hash = Hashing.md5();
+		HashCode code = hash.newHasher().putString(ts, Charsets.UTF_8).putString(privateKey, Charsets.UTF_8)
+				.putString(publicKey, Charsets.UTF_8).hash();
 
-    private HashMap<String, Object> getQueryParams(final String queryString) {
-        HashMap<String, Object> mapQueryParams = new HashMap<String, Object>();
+		return code.toString();
+	}
 
-        if (queryString == null) {
-            return mapQueryParams;
-        }
+	private HashMap<String, Object> getQueryParams(final String queryString) {
+		HashMap<String, Object> mapQueryParams = new HashMap<String, Object>();
 
-        String[] splitQueryString = queryString.split("&");
+		if (queryString == null) {
+			return mapQueryParams;
+		}
 
-        if (splitQueryString == null) {
-            return mapQueryParams;
-        }
+		String[] splitQueryString = queryString.split("&");
 
-        for (String queryParameter : splitQueryString) {
-            String[] queryParameterArgs = queryParameter.split("=");
+		if (splitQueryString == null) {
+			return mapQueryParams;
+		}
 
-            if (queryParameterArgs != null && queryParameterArgs.length == 2) {
-                mapQueryParams.put(queryParameterArgs[0], queryParameterArgs[1]);
-            }
+		for (String queryParameter : splitQueryString) {
+			String[] queryParameterArgs = queryParameter.split("=");
 
-        }
+			if (queryParameterArgs != null && queryParameterArgs.length == 2) {
+				mapQueryParams.put(queryParameterArgs[0], queryParameterArgs[1]);
+			}
 
-        return mapQueryParams;
-    }
+		}
+
+		return mapQueryParams;
+	}
+
 }

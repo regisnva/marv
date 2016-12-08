@@ -1,6 +1,8 @@
 package com.cit.api.marvel.gateway.conf;
 
-//@Component
+import org.springframework.stereotype.Component;
+
+@Component
 //@PropertySource("classpath:")
 public class MarvelConf {
 	

@@ -1,4 +1,4 @@
-package com.citi.api.marvel.conf;
+package com.cit.api.marvel.conf;
 
 import javax.servlet.Filter;
 

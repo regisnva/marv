@@ -1,4 +1,4 @@
-package com.cti.api.marvel.gateway.model;
+package com.cit.api.marvel.gateway.model;
 
 import java.util.List;
 

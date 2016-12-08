@@ -1,9 +1,9 @@
-package com.cti.api.marvel.gateway.model;
+package com.cit.api.marvel.gateway.model;
 
 import java.util.Calendar;
 import java.util.List;
 
-public class Character {
+public class MarvelCharacter {
 
 	private int id;
 	private String name;

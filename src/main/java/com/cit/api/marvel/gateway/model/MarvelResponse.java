@@ -1,5 +1,6 @@
-package com.cti.api.marvel.gateway.model;
+package com.cit.api.marvel.gateway.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -12,7 +13,9 @@ public class MarvelResponse<T> {
 	private String copyright;
 	private String attributionText;
 	private String attributionHTML;
-	private Data<T> data;
+	
+        @JsonIgnore
+        private Data<T> data;
 
 	@SuppressWarnings("rawtypes")
 	public static <T>MarvelResponse create(String json) {

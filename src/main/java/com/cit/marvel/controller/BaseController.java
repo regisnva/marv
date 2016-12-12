@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
 
+import com.cit.api.marvel.gateway.MarvelConstants;
+
 
 public abstract class BaseController {
 	
@@ -25,7 +27,11 @@ public abstract class BaseController {
 			String headerValue = req.getHeader(headerName);
 			
 			if(StringUtils.hasText(headerValue)){
-				headers.put(headerName, headerValue);
+				if (headerName.equalsIgnoreCase(MarvelConstants.ETAG_HEADER)){
+					headers.put(MarvelConstants.IF_NONE_MATCH_HEADER, headerValue);
+				} else {
+					headers.put(headerName, headerValue);
+				}
 			}
 		}
 		

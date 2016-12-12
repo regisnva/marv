@@ -3,7 +3,7 @@ package com.cit.api.marvel.gateway.conf;
 import org.springframework.stereotype.Component;
 
 @Component
-//@PropertySource("classpath:")
+//@PropertySource("classpath:/marvelapi.properties")
 public class MarvelConf {
 	
 	private final String domain = "https://gateway.marvel.com/v1/public/";

@@ -1,4 +1,4 @@
-package com.cit.marvel.controller;
+package com.cit.api.marvel.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.GenericType;

@@ -1,4 +1,4 @@
-package com.cit.marvel.controller;
+package com.cit.api.marvel.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -9,9 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import com.cit.api.marvel.controller.CharacterController;
 import com.cit.api.marvel.gateway.MarvelApiGateway;
 import com.cit.api.marvel.gateway.conf.MarvelConf;
-import com.cit.marvel.controller.CharacterController;
 
 import java.util.ArrayList;
 import java.util.List;

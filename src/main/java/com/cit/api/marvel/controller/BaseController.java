@@ -1,4 +1,4 @@
-package com.cit.marvel.controller;
+package com.cit.api.marvel.controller;
 
 import java.util.Enumeration;
 import java.util.HashMap;
